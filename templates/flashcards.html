@@ -1,46 +1,78 @@
 {% extends "base.html" %}
-
 {% block title %}Flashcards{% endblock %}
-
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h4 class="mb-0">📝 Flashcards</h4>
+        <h4 class="mb-0"><i class="bi bi-card-text"></i> Flashcards</h4>
         <small class="text-muted">{{ flashcards|length }} cards</small>
     </div>
-    <a href="{{ url_for('chat') }}" class="btn btn-primary btn-sm">+ AI Create</a>
+    <div>
+        <a href="{{ url_for('chat') }}" class="btn btn-primary btn-sm me-2">
+            <i class="bi bi-plus"></i> AI Create
+        </a>
+    </div>
+</div>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-8">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search cards..." id="searchInput">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <select class="form-select form-select-sm" id="categoryFilter">
+            <option value="all">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if current_category==cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </div>
 </div>
 
 {% if flashcards %}
-<div class="row">
+<div id="flashcardsList">
     {% for card in flashcards %}
-    <div class="col-md-6 col-lg-4 mb-3">
-        <div class="card h-100">
-            <div class="card-header d-flex justify-content-between align-items-center py-2">
+    <div class="card mb-2" data-category="{{ card.category }}">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
                 <span class="badge bg-secondary">{{ card.category }}</span>
                 {% if card.mastered %}
-                <span class="badge bg-success">✅</span>
+                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Mastered</span>
+                {% else %}
+                <span class="badge bg-warning"><i class="bi bi-clock"></i> Learning</span>
                 {% endif %}
             </div>
-            <div class="card-body p-3">
-                <h6 class="card-title">Q: {{ card.question }}</h6>
-                <p class="card-text text-muted">A: {{ card.answer }}</p>
-                <div class="small text-muted">
-                    Reviews: {{ card.review_count }}
+
+            <h6 class="card-title">{{ card.question }}</h6>
+            <p class="card-text text-muted">{{ card.answer }}</p>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="text-muted">
+                    <i class="bi bi-arrow-repeat"></i> {{ card.review_count }} reviews
                     {% if card.last_reviewed %}
-                    <br>Last: {{ card.last_reviewed.strftime('%m/%d') }}
+                    • {{ card.last_reviewed.strftime('%m/%d') }}
                     {% endif %}
-                </div>
-            </div>
-            <div class="card-footer bg-transparent border-0 p-3 pt-0">
-                <div class="btn-group w-100">
-                    <a href="{{ url_for('review_card', card_id=card.id, result='correct') }}" 
-                       class="btn btn-sm btn-success">✅</a>
-                    <a href="{{ url_for('review_card', card_id=card.id, result='wrong') }}" 
-                       class="btn btn-sm btn-danger">❌</a>
-                    <a href="{{ url_for('delete_flashcard', card_id=card.id) }}" 
-                       class="btn btn-sm btn-outline-danger"
-                       onclick="return confirm('Delete this card?')">🗑️</a>
+                </small>
+                <div class="btn-group btn-group-sm">
+                    <a href="{{ url_for('review_card', card_id=card.id, result='correct') }}"
+                        class="btn btn-outline-success">
+                        <i class="bi bi-check-lg"></i>
+                    </a>
+                    <a href="{{ url_for('review_card', card_id=card.id, result='wrong') }}"
+                        class="btn btn-outline-danger">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                    <!-- Edit button removed - add this route later if needed -->
+                    <button class="btn btn-outline-secondary" disabled title="Edit coming soon">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <form method="POST" action="{{ url_for('delete_flashcard', card_id=card.id) }}" class="d-inline"
+                        onsubmit="return confirm('Delete this card?');">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -49,10 +81,34 @@
 </div>
 {% else %}
 <div class="text-center py-5">
-    <div class="display-1 mb-3">📝</div>
+    <div class="display-1 text-muted mb-3">
+        <i class="bi bi-card-text"></i>
+    </div>
     <h5>No flashcards yet!</h5>
-    <p class="text-muted">Ask the AI to create some for you.</p>
-    <a href="{{ url_for('chat') }}" class="btn btn-primary">Start Creating</a>
+    <p class="text-muted">Create your first card with AI</p>
+    <a href="{{ url_for('chat') }}" class="btn btn-primary">
+        <i class="bi bi-robot"></i> Create with AI
+    </a>
 </div>
 {% endif %}
+
+<script>
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const cards = document.querySelectorAll('#flashcardsList .card');
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+        });
+    });
+
+    document.getElementById('categoryFilter').addEventListener('change', function () {
+        const category = this.value;
+        const cards = document.querySelectorAll('#flashcardsList .card');
+        cards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            card.style.display = (category === 'all' || cardCategory === category) ? 'block' : 'none';
+        });
+    });
+</script>
 {% endblock %}

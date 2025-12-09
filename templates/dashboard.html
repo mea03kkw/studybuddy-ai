@@ -1,78 +1,76 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard{% endblock %}
-
 {% block content %}
-<div class="row">
-    <div class="col-12 mb-3">
-        <h4>Welcome, {{ current_user.username }}!</h4>
-        <p class="text-muted">AI-powered learning assistant</p>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Welcome, {{ current_user.username }}!</h4>
+    <span class="badge bg-primary">Active</span>
 </div>
 
-<div class="row mb-3">
-    <div class="col-6 col-md-3 mb-2">
-        <div class="card bg-primary text-white text-center py-3">
-            <div class="card-body p-2">
-                <small>📚 Total</small>
+<div class="row g-2 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center p-2">
+                <div class="small">📚 Total Cards</div>
                 <div class="h4 mb-0">{{ total_cards }}</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3 mb-2">
-        <div class="card bg-success text-white text-center py-3">
-            <div class="card-body p-2">
-                <small>✅ Mastered</small>
+    <div class="col-6 col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center p-2">
+                <div class="small">✅ Mastered</div>
                 <div class="h4 mb-0">{{ mastered }}</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3 mb-2">
-        <div class="card bg-info text-white text-center py-3">
-            <div class="card-body p-2">
-                <small>📖 To Review</small>
-                <div class="h4 mb-0">{{ total_cards - mastered }}</div>
+    <div class="col-6 col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center p-2">
+                <div class="small">📊 Progress</div>
+                <div class="h4 mb-0">
+                    {% if total_cards > 0 %}
+                        {{ ((mastered/total_cards)*100)|round|int }}%
+                    {% else %}0%{% endif %}
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3 mb-2">
-        <div class="card bg-warning text-white text-center py-3">
-            <div class="card-body p-2">
-                <small>🎯 Progress</small>
-                <div class="h4 mb-0">
-                    {% if total_cards > 0 %}
-                        {{ (mastered/total_cards*100)|round|int }}%
-                    {% else %}
-                        0%
-                    {% endif %}
-                </div>
+    <div class="col-6 col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center p-2">
+                <div class="small">⏱️ Recent</div>
+                <div class="h4 mb-0">{{ recent_cards|length }}</div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-8 mb-3">
+<div class="row g-3">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-body">
-                <h5>Quick Actions</h5>
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('chat') }}" class="btn btn-primary">
-                        🤖 Chat with AI
+                <h6 class="card-title">Quick Actions</h6>
+                <div class="d-grid gap-2 mb-3">
+                    <a href="{{ url_for('chat') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-robot"></i> Chat with AI
                     </a>
-                    <a href="{{ url_for('flashcards') }}" class="btn btn-success">
-                        📝 Study Flashcards
+                    <a href="{{ url_for('flashcards') }}" class="btn btn-success btn-lg">
+                        <i class="bi bi-card-text"></i> Study Flashcards
                     </a>
                 </div>
                 
                 {% if recent_cards %}
-                <h6 class="mt-3">Recent Cards</h6>
-                <div class="list-group">
+                <h6>Recent Cards</h6>
+                <div class="list-group list-group-flush">
                     {% for card in recent_cards %}
-                    <div class="list-group-item list-group-item-action p-2">
-                        <small><strong>Q:</strong> {{ card.question[:40] }}...</small>
-                        <br>
-                        <small class="text-muted">{{ card.category }}</small>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">{{ card.category }}</small>
+                            <div class="small">{{ card.question[:40] }}...</div>
+                        </div>
+                        <span class="badge bg-{{ 'success' if card.mastered else 'warning' }}">
+                            {{ '✅' if card.mastered else '📚' }}
+                        </span>
                     </div>
                     {% endfor %}
                 </div>
@@ -84,22 +82,24 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h6>💡 AI Tips</h6>
-                <p class="small">Try asking:</p>
-                <ul class="small">
-                    <li>"Create flashcard about Python"</li>
-                    <li>"Make history card"</li>
-                    <li>"What is photosynthesis?"</li>
+                <h6><i class="bi bi-lightbulb"></i> AI Tips</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-2">✓ Say "create flashcard about..."</li>
+                    <li class="mb-2">✓ Ask questions with "?"</li>
+                    <li class="mb-2">✓ Review cards daily</li>
+                    <li>✓ Track your progress</li>
                 </ul>
             </div>
         </div>
         
         <div class="card mt-3">
-            <div class="card-body">
-                <h6>📊 Progress</h6>
-                <a href="{{ url_for('progress') }}" class="btn btn-outline-info btn-sm w-100">
-                    View Details
-                </a>
+            <div class="card-body text-center">
+                <div class="display-6 text-success">
+                    {% if total_cards > 0 %}
+                        {{ ((mastered/total_cards)*100)|round|int }}%
+                    {% else %}0%{% endif %}
+                </div>
+                <div class="small text-muted">Mastery Rate</div>
             </div>
         </div>
     </div>

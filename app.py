@@ -97,22 +97,27 @@ def flashcards():
 @login_required
 def review_card(card_id, result):
     card = Flashcard.query.get_or_404(card_id)
-    if card.user_id != current_user.id: flash('Access denied'); return redirect(url_for('flashcards'))
+    if card.user_id != current_user.id: 
+        flash('Access denied')
+        return redirect(url_for('flashcards'))
+    
     card.review_count = (card.review_count or 0) + 1
-    if card.review_count >= 3: card.mastered = True
+    if card.review_count >= 3: 
+        card.mastered = True
+    
     today = datetime.utcnow().date()
     session = LearningSession.query.filter(LearningSession.user_id==current_user.id, db.func.date(LearningSession.session_date)==today).first()
-    if not session: session = LearningSession(user_id=current_user.id); db.session.add(session)
+    if not session: 
+        session = LearningSession(user_id=current_user.id)
+        db.session.add(session)
+    
     session.flashcards_reviewed = (session.flashcards_reviewed or 0) + 1
-    if result == 'correct': session.correct_count = (session.correct_count or 0) + 1
-    db.session.commit(); flash('Review recorded!'); return redirect(url_for('flashcards')
-
-@app.route('/delete_flashcard/<int:card_id>')
-@login_required
-def delete_flashcard(card_id):
-    card = Flashcard.query.get_or_404(card_id)
-    if card.user_id != current_user.id: flash('Access denied'); return redirect(url_for('flashcards'))
-    db.session.delete(card); db.session.commit(); flash('Flashcard deleted!'); return redirect(url_for('flashcards'))
+    if result == 'correct': 
+        session.correct_count = (session.correct_count or 0) + 1
+    
+    db.session.commit()
+    flash('Review recorded!')
+    return redirect(url_for('flashcards'))
 
 @app.route('/progress')
 @login_required

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Flashcards{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-4">
+    <h4>📚 My Flashcards</h4>
+    <div>
+        <a href="{{ url_for('chat') }}" class="btn btn-primary me-2">💬 Create with AI</a>
+        <a href="{{ url_for('progress') }}" class="btn btn-outline-success">📊 View Progress</a>
+    </div>
+</div>
+
+{% if flashcards %}
+<div class="row">
+    {% for card in flashcards %}
+    <div class="col-md-6 mb-3">
+        <div class="card {% if card.mastered %}border-success{% endif %}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="badge bg-secondary">{{ card.category }}</span>
+                <div>
+                    {% if card.mastered %}
+                    <span class="badge bg-success me-2">✅ Mastered</span>
+                    {% endif %}
+                    <small class="text-muted">Reviews: {{ card.review_count }}</small>
+                </div>
+            </div>
+            <div class="card-body">
+                <h6>Q: {{ card.question }}</h6>
+                <p class="text-muted">A: {{ card.answer }}</p>
+                <div class="small text-muted">
+                    Created: {{ card.created_date.strftime('%Y-%m-%d') }}
+                    {% if card.last_reviewed %}
+                    <br>Last reviewed: {{ card.last_reviewed.strftime('%Y-%m-%d') }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <div>
+                    <a href="{{ url_for('review_card', card_id=card.id, result='correct') }}" 
+                       class="btn btn-sm btn-success">✅ Correct</a>
+                    <a href="{{ url_for('review_card', card_id=card.id, result='wrong') }}" 
+                       class="btn btn-sm btn-danger">❌ Need Review</a>
+                </div>
+                <a href="{{ url_for('delete_flashcard', card_id=card.id) }}" 
+                   class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('Delete this flashcard permanently?')">
+                   🗑️ Delete
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info text-center py-5">
+    <h4>📝 No Flashcards Yet!</h4>
+    <p class="lead">Ask the AI to create flashcards using natural language:</p>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h6>💡 Try these in the AI Chat:</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">"Create a flashcard about Python functions"</li>
+                        <li class="mb-2">"Make a history card about ancient Rome"</li>
+                        <li class="mb-2">"Add a math question about algebra equations"</li>
+                        <li class="mb-2">"New science flashcard for photosynthesis"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{{ url_for('chat') }}" class="btn btn-primary btn-lg mt-4">💬 Go to AI Chat</a>
+</div>
+{% endif %}
+{% endblock %}

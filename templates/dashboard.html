@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Welcome, {{ current_user.username }}!</h5>
+            </div>
+            <div class="card-body">
+                <p>StudyBuddy AI helps you learn with flashcards and AI assistance.</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>📚 Total Flashcards</h6>
+                                <h3>{{ total_cards }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>✅ Mastered</h6>
+                                <h3>{{ mastered }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>Quick Actions:</h6>
+                    <a href="{{ url_for('chat') }}" class="btn btn-primary me-2">💬 Chat with AI</a>
+                    <a href="{{ url_for('flashcards') }}" class="btn btn-success">📝 Manage Flashcards</a>
+                </div>
+            </div>
+        </div>
+        
+        {% if recent_cards %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6>Recent Flashcards</h6>
+            </div>
+            <div class="card-body">
+                {% for card in recent_cards %}
+                <div class="mb-2 p-2 border rounded">
+                    <strong>Q:</strong> {{ card.question[:50] }}...<br>
+                    <strong>A:</strong> {{ card.answer[:50] }}...
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6>AI Learning Assistant</h6>
+            </div>
+            <div class="card-body">
+                <p>Try asking our AI to create flashcards!</p>
+                <p class="text-muted small">Examples:</p>
+                <ul class="small">
+                    <li>"Create a flashcard about Python functions"</li>
+                    <li>"Make a math card: quadratic formula"</li>
+                    <li>"Add biology question about cells"</li>
+                </ul>
+                <a href="{{ url_for('chat') }}" class="btn btn-outline-primary w-100">Start Chat</a>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6>Study Progress</h6>
+            </div>
+            <div class="card-body">
+                <p>Track your learning journey.</p>
+                <a href="{{ url_for('progress') }}" class="btn btn-outline-success w-100">View Progress</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

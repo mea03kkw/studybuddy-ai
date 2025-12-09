@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}AI Chat{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>💬 AI Learning Assistant (phi-2:2.7b)</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Your Message</label>
+                        <textarea name="message" class="form-control" rows="3" 
+                                  placeholder="Ask a question or create flashcards naturally..." required>{% if request.method == 'POST' %}{{ request.form.message }}{% endif %}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send to AI</button>
+                </form>
+                
+                {% if ai_response %}
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6>🤖 AI Response:</h6>
+                    <p>{{ ai_response }}</p>
+                    
+                    {% if new_flashcard %}
+                    <div class="alert alert-success mt-3">
+                        <strong>🎉 Flashcard Created!</strong><br>
+                        <strong>Q:</strong> {{ new_flashcard.question }}<br>
+                        <strong>A:</strong> {{ new_flashcard.answer }}<br>
+                        <strong>Category:</strong> {{ new_flashcard.category }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6>💡 How to Create Flashcards with AI</h6>
+            </div>
+            <div class="card-body">
+                <p>Speak naturally to create flashcards:</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-primary mb-3">
+                            <div class="card-body">
+                                <strong>Simple Format:</strong><br>
+                                "Create a flashcard about Python lists"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-primary mb-3">
+                            <div class="card-body">
+                                <strong>Direct Format:</strong><br>
+                                "Make a history card about World War 2"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted">The AI will automatically detect these requests and create flashcards!</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6>📚 Quick Stats</h6>
+            </div>
+            <div class="card-body">
+                <p>All flashcards must be created through AI conversation.</p>
+                <a href="{{ url_for('flashcards') }}" class="btn btn-outline-primary w-100 mb-2">
+                    📝 View My Flashcards
+                </a>
+                <a href="{{ url_for('progress') }}" class="btn btn-outline-success w-100">
+                    📊 View Progress
+                </a>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6>🤖 AI Status</h6>
+            </div>
+            <div class="card-body">
+                {% if ai_response %}
+                    <p class="text-success">✅ AI Responding Normally</p>
+                {% else %}
+                    <p class="text-warning">⚠️ Ask a question to test AI</p>
+                {% endif %}
+                <p class="small">Make sure Ollama is running:</p>
+                <code>ollama serve</code>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

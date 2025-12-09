@@ -3,309 +3,534 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyBuddy AI - Interactive Demo</title>
+    <title>StudyBuddy AI - Live Demo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .demo-card { border: 2px solid #0d6efd; }
-        .simulated-response { background-color: #e9ecef; border-radius: 5px; padding: 10px; margin: 10px 0; }
-        .flashcard-demo { background-color: #d1e7dd; }
+        body { background-color: #f8f9fa; }
+        .demo-card { 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .nav-tabs .nav-link.active { font-weight: bold; }
+        .simulated-ai { 
+            background-color: #e7f3ff; 
+            border-left: 4px solid #0d6efd;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .flashcard-item {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .page-content { display: none; }
+        .active-page { display: block; }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="#">StudyBuddy AI - Interactive Demo</a>
+            <a class="navbar-brand" href="#" onclick="showPage('dashboard')">🧠 StudyBuddy AI</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="#" onclick="showPage('dashboard')">🏠 Dashboard</a>
+                <a class="nav-link" href="#" onclick="showPage('chat')">🤖 AI Chat</a>
+                <a class="nav-link" href="#" onclick="showPage('flashcards')">📝 Flashcards</a>
+                <a class="nav-link" href="#" onclick="showPage('progress')">📊 Progress</a>
+                <a class="nav-link" href="#" onclick="showPage('login')">🔐 Login</a>
+            </div>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <div class="alert alert-info">
-            <h4>📱 Interactive Demo Simulation</h4>
-            <p>This is a <strong>static simulation</strong> of the StudyBuddy AI application. The actual application requires Flask backend and Ollama AI running locally.</p>
+        <!-- Demo Info -->
+        <div class="alert alert-info text-center">
+            <strong>🎮 Interactive Demo</strong> - This simulates the StudyBuddy AI application. 
+            <span class="text-muted">Click tabs above to navigate different pages.</span>
         </div>
 
-        <div class="row">
-            <!-- Login Demo -->
-            <div class="col-md-6 mb-4">
-                <div class="card demo-card">
-                    <div class="card-header bg-primary text-white">
-                        <h5>🔐 Login Simulation</h5>
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page-content active-page">
+            <h3 class="mb-4">🏠 Dashboard</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-card text-center">
+                        <h5>📚 Total Cards</h5>
+                        <h2 id="totalCards">5</h2>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control" value="admin" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" class="form-control" value="••••••••" readonly>
-                        </div>
-                        <button class="btn btn-primary" onclick="simulateLogin()">Simulate Login</button>
-                        <div id="loginResult" class="mt-3"></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card text-center">
+                        <h5>✅ Mastered</h5>
+                        <h2 id="masteredCards">2</h2>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card text-center">
+                        <h5>📊 Accuracy</h5>
+                        <h2 id="accuracyRate">75%</h2>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card text-center">
+                        <h5>⏱️ Sessions</h5>
+                        <h2 id="totalSessions">3</h2>
                     </div>
                 </div>
             </div>
 
-            <!-- AI Chat Demo -->
-            <div class="col-md-6 mb-4">
-                <div class="card demo-card">
-                    <div class="card-header bg-success text-white">
-                        <h5>🤖 AI Chat Simulation</h5>
+            <div class="demo-card card mt-4">
+                <div class="card-body">
+                    <h5>📈 Recent Activity</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">✅ Reviewed "Python Functions" - Correct</li>
+                        <li class="list-group-item">🤖 Created flashcard via AI: "History of Rome"</li>
+                        <li class="list-group-item">📝 Added new card: "Chemistry Basics"</li>
+                        <li class="list-group-item">🎯 Study session: 10 cards, 80% accuracy</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="demo-card card mt-4">
+                <div class="card-body text-center">
+                    <h5>🚀 Quick Actions</h5>
+                    <button class="btn btn-primary btn-lg m-2" onclick="showPage('chat')">
+                        🤖 Chat with AI
+                    </button>
+                    <button class="btn btn-success btn-lg m-2" onclick="showPage('flashcards')">
+                        📝 Study Now
+                    </button>
+                    <button class="btn btn-info btn-lg m-2" onclick="showPage('progress')">
+                        📊 View Progress
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Chat Page -->
+        <div id="chat" class="page-content">
+            <h3 class="mb-4">🤖 AI Learning Assistant</h3>
+            
+            <div class="demo-card card">
+                <div class="card-body">
+                    <h5>💬 Chat Interface</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Try these commands:</label>
+                        <select class="form-select" id="chatCommand">
+                            <option value="create flashcard about python">Create flashcard about Python</option>
+                            <option value="make a card about world war 2">Make a card about World War 2</option>
+                            <option value="what is photosynthesis?">What is photosynthesis?</option>
+                            <option value="explain machine learning">Explain machine learning</option>
+                        </select>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Try these commands:</label>
-                            <select class="form-select" id="chatOptions">
-                                <option value="create flashcard about python">Create flashcard about Python</option>
-                                <option value="make a card about world war 2">Make a card about World War 2</option>
-                                <option value="what is photosynthesis?">What is photosynthesis?</option>
-                                <option value="hello, how are you?">Hello, how are you?</option>
-                            </select>
+                    <button class="btn btn-success" onclick="simulateAI()">Send to AI</button>
+                    
+                    <div class="mt-3" id="aiResponse">
+                        <!-- AI responses appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-card card mt-4">
+                <div class="card-body">
+                    <h5>💡 How It Works</h5>
+                    <p>The AI detects flashcard creation requests and automatically creates study cards.</p>
+                    <div class="alert alert-light">
+                        <strong>Try these in the real app:</strong>
+                        <ul class="mt-2">
+                            <li>"Create a flashcard about Python functions"</li>
+                            <li>"Make a history card about ancient Rome"</li>
+                            <li>"Add math question: quadratic formula"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcards Page -->
+        <div id="flashcards" class="page-content">
+            <h3 class="mb-4">📝 My Flashcards</h3>
+            
+            <div class="demo-card card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5>Study Cards</h5>
+                        <button class="btn btn-primary btn-sm" onclick="addSampleCard()">
+                            + Add Sample Card
+                        </button>
+                    </div>
+                    
+                    <div id="flashcardsList">
+                        <!-- Flashcards will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-card card mt-4">
+                <div class="card-body">
+                    <h5>📚 Card Management</h5>
+                    <p>In the real application:</p>
+                    <ul>
+                        <li>✅ <strong>Correct</strong>: Mark as known (3x = mastered)</li>
+                        <li>❌ <strong>Need Review</strong>: Mark for later study</li>
+                        <li>🗑️ <strong>Delete</strong>: Remove card permanently</li>
+                        <li>📊 <strong>Track Progress</strong>: All reviews recorded</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Page -->
+        <div id="progress" class="page-content">
+            <h3 class="mb-4">📊 Learning Progress</h3>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="demo-card card">
+                        <div class="card-body">
+                            <h5>📈 Study Sessions</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Cards Reviewed</th>
+                                        <th>Correct</th>
+                                        <th>Accuracy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Today</td><td>8</td><td>6</td><td>75%</td></tr>
+                                    <tr><td>Yesterday</td><td>12</td><td>10</td><td>83%</td></tr>
+                                    <tr><td>Jan 10</td><td>15</td><td>12</td><td>80%</td></tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <button class="btn btn-success" onclick="simulateChat()">Send to AI</button>
-                        <div id="chatResult" class="mt-3"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="demo-card card">
+                        <div class="card-body text-center">
+                            <h5>🎯 This Week</h5>
+                            <div class="display-4 text-success">85%</div>
+                            <p class="text-muted">Overall Accuracy</p>
+                            <hr>
+                            <p><strong>35</strong> Cards Reviewed</p>
+                            <p><strong>5</strong> Study Sessions</p>
+                            <p><strong>12</strong> Mastered Cards</p>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-card card mt-3">
+                        <div class="card-body">
+                            <h6>📅 Daily Goal</h6>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 70%">70%</div>
+                            </div>
+                            <small class="text-muted">7 of 10 cards reviewed today</small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Flashcard Demo -->
-        <div class="card mb-4 demo-card">
-            <div class="card-header bg-warning">
-                <h5>📝 Flashcard System</h5>
-            </div>
-            <div class="card-body">
-                <div class="row" id="flashcardDemo">
-                    <!-- Flashcards will appear here -->
-                </div>
-                <button class="btn btn-warning mt-3" onclick="addSampleFlashcard()">Add Sample Flashcard</button>
-                <button class="btn btn-danger mt-3" onclick="clearFlashcards()">Clear All</button>
-            </div>
-        </div>
-
-        <!-- Progress Tracking -->
-        <div class="card mb-4 demo-card">
-            <div class="card-header bg-info text-white">
-                <h5>📊 Progress Tracking</h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-4">
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <h6>Total Reviews</h6>
-                                <h3 id="totalReviews">0</h3>
+        <!-- Login Page -->
+        <div id="login" class="page-content">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="demo-card card">
+                        <div class="card-body">
+                            <h3 class="text-center mb-4">🔐 StudyBuddy AI Login</h3>
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" value="demo_user" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" value="••••••••" readonly>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="simulateLogin()">
+                                Login to Demo
+                            </button>
+                            <div class="mt-3 text-center">
+                                <small class="text-muted">Demo credentials: demo_user / ••••••••</small>
+                                <br>
+                                <small class="text-muted">Real app: admin / admin</small>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <h6>Accuracy Rate</h6>
-                                <h3 id="accuracyRate">0%</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <h6>Study Sessions</h6>
-                                <h3 id="studySessions">0</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-info mt-3" onclick="simulateStudySession()">Simulate Study Session</button>
-            </div>
-        </div>
-
-        <!-- Real Application Instructions -->
-        <div class="card">
-            <div class="card-header">
-                <h5>🚀 Run the Real Application</h5>
-            </div>
-            <div class="card-body">
-                <h6>To run the actual Flask application:</h6>
-                <pre><code># 1. Clone repository
-git clone https://github.com/mea03kkw/studybuddy-ai.git
+                    
+                    <div class="demo-card card mt-4">
+                        <div class="card-body">
+                            <h5>🚀 Ready to Run Locally?</h5>
+                            <pre class="bg-light p-3 rounded"><code># Clone & setup
+git clone https://github.com/mea03kkw/studybuddy-ai
 cd studybuddy-ai
-
-# 2. Create virtual environment
 python -m venv venv
-venv\Scripts\activate  # Windows
-# or source venv/bin/activate  # Mac/Linux
-
-# 3. Install dependencies
+venv\Scripts\activate
 pip install -r requirements.txt
 
-# 4. Install Ollama (from ollama.ai)
-# 5. Pull model: ollama pull phi:2.7b
-
-# 6. Run Ollama in separate terminal
+# Run Ollama & Flask
 ollama serve
-
-# 7. Run Flask app
 python app.py
 
-# 8. Open http://localhost:5000
+# Open: http://localhost:5000
 # Login: admin / admin</code></pre>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-4 text-center text-muted">
+            <p>
+                <strong>StudyBuddy AI Demo</strong> • 
+                <a href="https://github.com/mea03kkw/studybuddy-ai" target="_blank">View Source Code</a> • 
+                Flask + Ollama • Under 200 Lines
+            </p>
         </div>
     </div>
 
     <script>
-        let flashcards = [];
-        let reviewStats = { total: 0, correct: 0, sessions: 0 };
+        // Sample flashcards data
+        let flashcards = [
+            { id: 1, question: "What is Python?", answer: "A programming language", category: "Programming", reviews: 2, mastered: true },
+            { id: 2, question: "When was WW2?", answer: "1939-1945", category: "History", reviews: 1, mastered: false },
+            { id: 3, question: "What is photosynthesis?", answer: "Plants make food from light", category: "Biology", reviews: 3, mastered: true },
+            { id: 4, question: "2x + 5 = 15, x = ?", answer: "x = 5", category: "Math", reviews: 0, mastered: false }
+        ];
 
-        function simulateLogin() {
-            document.getElementById('loginResult').innerHTML = 
-                '<div class="alert alert-success">✅ Logged in successfully as admin! Redirecting to dashboard...</div>' +
-                '<div class="alert alert-info mt-2">In real app: Redirects to dashboard with learning statistics</div>';
+        // Statistics
+        let stats = {
+            totalCards: 5,
+            mastered: 2,
+            accuracy: 75,
+            sessions: 3
+        };
+
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active-page');
+            });
+            // Show selected page
+            document.getElementById(pageId).classList.add('active-page');
+            // Update active nav link
+            updateActiveNav(pageId);
+            
+            // Refresh content if needed
+            if (pageId === 'flashcards') {
+                updateFlashcardsDisplay();
+            }
         }
 
-        function simulateChat() {
-            const option = document.getElementById('chatOptions').value;
-            const chatResult = document.getElementById('chatResult');
+        function updateActiveNav(pageId) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            // Find and activate corresponding nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.textContent.includes(getNavText(pageId))) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function getNavText(pageId) {
+            const map = {
+                'dashboard': 'Dashboard',
+                'chat': 'AI Chat',
+                'flashcards': 'Flashcards',
+                'progress': 'Progress',
+                'login': 'Login'
+            };
+            return map[pageId] || '';
+        }
+
+        // AI Simulation
+        function simulateAI() {
+            const command = document.getElementById('chatCommand').value;
+            const responseDiv = document.getElementById('aiResponse');
             
             let response = '';
-            let flashcardCreated = false;
             
-            if (option.includes('flashcard') || option.includes('card') || option.includes('?')) {
-                response = '<div class="alert alert-success">✅ Created flashcard successfully!</div>' +
-                          '<div class="simulated-response flashcard-demo">' +
-                          '<strong>🤖 AI Response:</strong> "I\'ve created a flashcard for you!"<br>' +
-                          '<strong>📝 Created Flashcard:</strong><br>' +
-                          '<strong>Q:</strong> ' + (option.includes('python') ? 'What is Python?' : 
-                            option.includes('world war') ? 'When did World War 2 occur?' :
-                            'What is photosynthesis?') + '<br>' +
-                          '<strong>A:</strong> ' + (option.includes('python') ? 'A programming language' : 
-                            option.includes('world war') ? '1939 to 1945' :
-                            'Process where plants convert light to energy') +
-                          '</div>';
-                flashcardCreated = true;
+            if (command.includes('flashcard') || command.includes('card') || command.includes('?')) {
+                // Flashcard creation
+                response = `
+                    <div class="simulated-ai">
+                        <strong>🤖 AI:</strong> I'll create a flashcard for you!
+                        <div class="alert alert-success mt-2">
+                            <strong>✅ Flashcard Created!</strong><br>
+                            <strong>Q:</strong> ${getQuestionFromCommand(command)}<br>
+                            <strong>A:</strong> ${getAnswerFromCommand(command)}<br>
+                            <strong>Category:</strong> ${getCategoryFromCommand(command)}
+                        </div>
+                    </div>
+                `;
+                // Add to flashcards
+                addFlashcardFromAI(command);
             } else {
-                response = '<div class="simulated-response">' +
-                          '<strong>🤖 AI Response:</strong> "Hello! I\'m your StudyBuddy AI assistant. I can help you create flashcards and answer learning questions."' +
-                          '</div>';
+                // Regular response
+                response = `
+                    <div class="simulated-ai">
+                        <strong>🤖 AI:</strong> I can help you create flashcards and answer questions. 
+                        Try asking me to create a flashcard about any topic!
+                    </div>
+                `;
             }
             
-            chatResult.innerHTML = response;
-            
-            if (flashcardCreated) {
-                addFlashcardToDemo(option);
-            }
+            responseDiv.innerHTML = response;
+            // Update stats
+            stats.totalCards++;
+            updateDashboardStats();
         }
 
-        function addFlashcardToDemo(question) {
-            const card = {
+        function getQuestionFromCommand(cmd) {
+            if (cmd.includes('python')) return "What is Python used for?";
+            if (cmd.includes('world war')) return "When did World War 2 occur?";
+            if (cmd.includes('photosynthesis')) return "What is photosynthesis?";
+            if (cmd.includes('machine learning')) return "What is machine learning?";
+            return "Question about the topic";
+        }
+
+        function getAnswerFromCommand(cmd) {
+            if (cmd.includes('python')) return "Python is used for web development, data science, AI, and automation.";
+            if (cmd.includes('world war')) return "World War 2 occurred from 1939 to 1945.";
+            if (cmd.includes('photosynthesis')) return "Process where plants convert light energy to chemical energy.";
+            if (cmd.includes('machine learning')) return "A branch of AI that enables computers to learn from data.";
+            return "Detailed answer about the topic";
+        }
+
+        function getCategoryFromCommand(cmd) {
+            if (cmd.includes('python') || cmd.includes('machine learning')) return "Programming";
+            if (cmd.includes('world war')) return "History";
+            if (cmd.includes('photosynthesis')) return "Biology";
+            return "General";
+        }
+
+        function addFlashcardFromAI(command) {
+            const newCard = {
                 id: flashcards.length + 1,
-                question: question.includes('python') ? 'What is Python?' : 
-                         question.includes('world war') ? 'When did World War 2 occur?' :
-                         'What is photosynthesis?',
-                answer: question.includes('python') ? 'A programming language' : 
-                       question.includes('world war') ? '1939 to 1945' :
-                       'Process where plants convert light to energy',
-                category: question.includes('python') ? 'Programming' : 
-                         question.includes('world war') ? 'History' : 'Science'
+                question: getQuestionFromCommand(command),
+                answer: getAnswerFromCommand(command),
+                category: getCategoryFromCommand(command),
+                reviews: 0,
+                mastered: false
             };
-            flashcards.push(card);
-            updateFlashcardDisplay();
+            flashcards.push(newCard);
+            updateDashboardStats();
         }
 
-        function addSampleFlashcard() {
+        // Flashcards Management
+        function updateFlashcardsDisplay() {
+            const container = document.getElementById('flashcardsList');
+            if (!container) return;
+            
+            if (flashcards.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No flashcards yet. Try creating some with the AI!</div>';
+                return;
+            }
+            
+            let html = '';
+            flashcards.forEach(card => {
+                html += `
+                    <div class="flashcard-item">
+                        <div class="d-flex justify-content-between">
+                            <span class="badge bg-secondary">${card.category}</span>
+                            ${card.mastered ? '<span class="badge bg-success">✅ Mastered</span>' : ''}
+                        </div>
+                        <h6 class="mt-2">Q: ${card.question}</h6>
+                        <p class="text-muted">A: ${card.answer}</p>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-success" onclick="reviewCard(${card.id}, true)">✅ Correct</button>
+                            <button class="btn btn-danger" onclick="reviewCard(${card.id}, false)">❌ Review</button>
+                            <button class="btn btn-outline-danger" onclick="deleteCard(${card.id})">🗑️ Delete</button>
+                        </div>
+                        <small class="text-muted d-block mt-2">Reviews: ${card.reviews}</small>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function addSampleCard() {
             const samples = [
-                {q: 'What is SQL?', a: 'Structured Query Language for databases', c: 'Programming'},
-                {q: 'Who painted the Mona Lisa?', a: 'Leonardo da Vinci', c: 'Art'},
-                {q: 'What is Newton\'s First Law?', a: 'An object at rest stays at rest', c: 'Physics'}
+                {q: "What is SQL?", a: "Structured Query Language for databases", c: "Programming"},
+                {q: "Who painted the Mona Lisa?", a: "Leonardo da Vinci", c: "Art"},
+                {q: "What is Newton's First Law?", a: "Object at rest stays at rest", c: "Physics"}
             ];
             const sample = samples[Math.floor(Math.random() * samples.length)];
             
-            const card = {
+            const newCard = {
                 id: flashcards.length + 1,
                 question: sample.q,
                 answer: sample.a,
-                category: sample.c
+                category: sample.c,
+                reviews: 0,
+                mastered: false
             };
-            flashcards.push(card);
-            updateFlashcardDisplay();
+            flashcards.push(newCard);
+            stats.totalCards++;
+            updateFlashcardsDisplay();
+            updateDashboardStats();
         }
 
-        function updateFlashcardDisplay() {
-            const container = document.getElementById('flashcardDemo');
-            container.innerHTML = '';
-            
-            flashcards.forEach(card => {
-                const cardHtml = `
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <span class="badge bg-secondary">${card.category}</span>
-                        </div>
-                        <div class="card-body">
-                            <h6>Q: ${card.question}</h6>
-                            <p class="text-muted">A: ${card.answer}</p>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-sm btn-success" onclick="reviewCard(${card.id}, 'correct')">✅ Correct</button>
-                            <button class="btn btn-sm btn-danger" onclick="reviewCard(${card.id}, 'wrong')">❌ Review</button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCard(${card.id})">🗑️ Delete</button>
-                        </div>
-                    </div>
-                </div>`;
-                container.innerHTML += cardHtml;
-            });
-            
-            if (flashcards.length === 0) {
-                container.innerHTML = '<div class="col-12"><div class="alert alert-info">No flashcards yet. Try creating some using the AI Chat!</div></div>';
+        function reviewCard(cardId, isCorrect) {
+            const card = flashcards.find(c => c.id === cardId);
+            if (card) {
+                card.reviews++;
+                if (isCorrect && card.reviews >= 3) {
+                    card.mastered = true;
+                    stats.mastered++;
+                }
+                // Update accuracy
+                stats.accuracy = Math.min(100, stats.accuracy + (isCorrect ? 2 : -1));
+                updateFlashcardsDisplay();
+                updateDashboardStats();
+                alert(`Card marked as ${isCorrect ? '✅ Correct' : '❌ Needs Review'}`);
             }
         }
 
-        function reviewCard(id, result) {
-            reviewStats.total++;
-            if (result === 'correct') reviewStats.correct++;
-            
-            document.getElementById('totalReviews').textContent = reviewStats.total;
-            const accuracy = reviewStats.total > 0 ? Math.round((reviewStats.correct / reviewStats.total) * 100) : 0;
-            document.getElementById('accuracyRate').textContent = accuracy + '%';
-            
-            // Find and mark as reviewed
-            const cardIndex = flashcards.findIndex(c => c.id === id);
-            if (cardIndex !== -1) {
-                // In real app, this would update the database
-            }
-            
-            alert(`Card marked as ${result === 'correct' ? '✅ Correct' : '❌ Needs Review'}. Progress updated!`);
-        }
-
-        function deleteCard(id) {
+        function deleteCard(cardId) {
             if (confirm('Delete this flashcard?')) {
-                flashcards = flashcards.filter(card => card.id !== id);
-                updateFlashcardDisplay();
+                flashcards = flashcards.filter(c => c.id !== cardId);
+                stats.totalCards--;
+                updateFlashcardsDisplay();
+                updateDashboardStats();
             }
         }
 
-        function clearFlashcards() {
-            if (confirm('Clear all flashcards?')) {
-                flashcards = [];
-                updateFlashcardDisplay();
-            }
+        function simulateLogin() {
+            alert('✅ Logged in successfully! Redirecting to dashboard...');
+            showPage('dashboard');
         }
 
-        function simulateStudySession() {
-            reviewStats.sessions++;
-            reviewStats.total += 3;
-            reviewStats.correct += 2;
-            
-            document.getElementById('studySessions').textContent = reviewStats.sessions;
-            document.getElementById('totalReviews').textContent = reviewStats.total;
-            const accuracy = Math.round((reviewStats.correct / reviewStats.total) * 100);
-            document.getElementById('accuracyRate').textContent = accuracy + '%';
-            
-            alert('Simulated study session: Reviewed 3 cards, 2 correct! Progress updated.');
+        function updateDashboardStats() {
+            document.getElementById('totalCards').textContent = stats.totalCards;
+            document.getElementById('masteredCards').textContent = stats.mastered;
+            document.getElementById('accuracyRate').textContent = stats.accuracy + '%';
+            document.getElementById('totalSessions').textContent = stats.sessions;
         }
 
         // Initialize
-        updateFlashcardDisplay();
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFlashcardsDisplay();
+            updateDashboardStats();
+            showPage('dashboard');
+        });
     </script>
 </body>
 </html>

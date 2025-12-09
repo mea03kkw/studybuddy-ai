@@ -105,7 +105,7 @@ def review_card(card_id, result):
     if not session: session = LearningSession(user_id=current_user.id); db.session.add(session)
     session.flashcards_reviewed = (session.flashcards_reviewed or 0) + 1
     if result == 'correct': session.correct_count = (session.correct_count or 0) + 1
-    db.session.commit(); flash('Review recorded!'); return redirect(url_for('flashcards'))
+    db.session.commit(); flash('Review recorded!'); return redirect(url_for('flashcards')
 
 @app.route('/delete_flashcard/<int:card_id>')
 @login_required

@@ -1,86 +1,123 @@
 {% extends "base.html" %}
 
-{% block title %}Progress Tracking{% endblock %}
+{% block title %}Progress{% endblock %}
 
 {% block content %}
-<h4 class="mb-4">📊 Learning Progress</h4>
+<div class="row">
+    <div class="col-12 mb-3">
+        <h4>📊 Progress</h4>
+        <p class="text-muted">Your learning journey</p>
+    </div>
+</div>
 
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h6>Total Reviews</h6>
-                <h3>{{ total_reviews }}</h3>
+<div class="row mb-3">
+    <div class="col-6 col-md-3 mb-2">
+        <div class="card bg-primary text-white text-center py-3">
+            <div class="card-body p-2">
+                <small>Total Reviews</small>
+                <div class="h4 mb-0">{{ total_reviews }}</div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h6>Accuracy Rate</h6>
-                <h3>{{ "%.1f"|format(accuracy) }}%</h3>
+    <div class="col-6 col-md-3 mb-2">
+        <div class="card bg-success text-white text-center py-3">
+            <div class="card-body p-2">
+                <small>Accuracy</small>
+                <div class="h4 mb-0">{{ "%.1f"|format(accuracy) }}%</div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h6>Study Sessions</h6>
-                <h3>{{ sessions|length }}</h3>
+    <div class="col-6 col-md-3 mb-2">
+        <div class="card bg-info text-white text-center py-3">
+            <div class="card-body p-2">
+                <small>Sessions</small>
+                <div class="h4 mb-0">{{ sessions|length }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 mb-2">
+        <div class="card bg-warning text-white text-center py-3">
+            <div class="card-body p-2">
+                <small>Avg/Day</small>
+                <div class="h4 mb-0">
+                    {% if sessions|length > 0 %}
+                        {{ (total_reviews/sessions|length)|round|int }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <h6>Recent Study Sessions</h6>
-    </div>
-    <div class="card-body">
-        {% if sessions %}
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Cards Reviewed</th>
-                        <th>Correct Answers</th>
-                        <th>Accuracy</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for session in sessions %}
-                    <tr>
-                        <td>{{ session.session_date.strftime('%Y-%m-%d %H:%M') }}</td>
-                        <td>{{ session.flashcards_reviewed }}</td>
-                        <td>{{ session.correct_count }}</td>
-                        <td>
-                            {% if session.flashcards_reviewed > 0 %}
-                            {{ "%.1f"|format(session.correct_count/session.flashcards_reviewed*100) }}%
-                            {% else %}
-                            0%
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="row">
+    <div class="col-md-8 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6>Recent Sessions</h6>
+                {% if sessions %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Reviewed</th>
+                                <th>Correct</th>
+                                <th>Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for session in sessions %}
+                            <tr>
+                                <td>{{ session.session_date.strftime('%m/%d') }}</td>
+                                <td>{{ session.flashcards_reviewed }}</td>
+                                <td>{{ session.correct_count }}</td>
+                                <td>
+                                    {% if session.flashcards_reviewed > 0 %}
+                                        {{ "%.0f"|format(session.correct_count/session.flashcards_reviewed*100) }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-3">No study sessions yet.</p>
+                {% endif %}
+            </div>
         </div>
-        {% else %}
-        <p class="text-muted">No study sessions yet. Start reviewing flashcards!</p>
-        {% endif %}
     </div>
-</div>
-
-<div class="card mt-4">
-    <div class="card-body">
-        <h6>📈 Learning Tips:</h6>
-        <ul>
-            <li>Review flashcards daily for best retention</li>
-            <li>Aim for 3 correct reviews to master a card</li>
-            <li>Use the AI to create cards on difficult topics</li>
-            <li>Track your progress here weekly</li>
-        </ul>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>📈 Tips</h6>
+                <ul class="small">
+                    <li>Review daily for best retention</li>
+                    <li>Aim for 3 correct to master cards</li>
+                    <li>Use AI for difficult topics</li>
+                    <li>Track progress weekly</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <h6>🎯 Current Streak</h6>
+                <div class="display-4 text-success">
+                    {% if sessions|length > 0 %}
+                        {{ sessions|length }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+                <small class="text-muted">days active</small>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
